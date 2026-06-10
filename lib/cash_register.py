@@ -23,9 +23,13 @@ class CashRegister:
 
         self._discount = value
 
-    def add_item(self, item, price, quantity):
+    def add_item(self, item, price, quantity=1):
+        """Add item with default quantity=1"""
         self.total += price * quantity
-        self.items.append(item)
+        
+        # Add the item to items list for each quantity
+        for _ in range(quantity):
+            self.items.append(item)
 
         self.previous_transactions.append({
             "item": item,
@@ -34,44 +38,32 @@ class CashRegister:
         })
 
     def apply_discount(self):
-        if len(self.previous_transactions) == 0:
+        """Apply discount if there is one, otherwise print message"""
+        if self.discount == 0:
             print("There is no discount to apply.")
             return
-
-        last_transaction = self.previous_transactions.pop()
-
-        if last_transaction["item"] in self.items:
-            self.items.remove(last_transaction["item"])
-
-        self.total -= last_transaction["price"] * last_transaction["quantity"]
-        self.total -= self.total * (self.discount / 100)
+        
+        # Calculate discount amount
+        discount_amount = self.total * (self.discount / 100)
+        self.total -= discount_amount
+        
+        
+        print(f"After the discount, the total comes to ${int(self.total)}.")
 
     def void_last_transaction(self):
+        """Remove the last transaction and update total and items"""
         if len(self.previous_transactions) == 0:
             return
 
         last_transaction = self.previous_transactions.pop()
-
-        if last_transaction["item"] in self.items:
-            self.items.remove(last_transaction["item"])
-
-        self.total -= last_transaction["price"] * last_transaction["quantity"]      
-
-
-register = CashRegister(20)  # 20% discount
-
-register.add_item("Book", 10, 2)      # 20
-register.add_item("Coffee", 5, 1)     # 5
-
-print("Total before discount:", register.total)
-print("Items:", register.items)
-print("Transactions:", register.previous_transactions)
-
-register.apply_discount()
-
-print("Total after discount:", register.total)
-print("Items after discount:", register.items)
-print("Transactions after discount:", register.previous_transactions)
+        
+        # Remove items from the list by quantity
+        for _ in range(last_transaction["quantity"]):
+            if last_transaction["item"] in self.items:
+                self.items.remove(last_transaction["item"])
+        
+        # Subtract from total
+        self.total -= last_transaction["price"] * last_transaction["quantity"]
   
 
      
