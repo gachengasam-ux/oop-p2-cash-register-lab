@@ -56,7 +56,22 @@ class CashRegister:
             self.items.remove(last_transaction["item"])
 
         self.total -= last_transaction["price"] * last_transaction["quantity"]      
-      
+
+
+register = CashRegister(20)  # 20% discount
+
+register.add_item("Book", 10, 2)      # 20
+register.add_item("Coffee", 5, 1)     # 5
+
+print("Total before discount:", register.total)
+print("Items:", register.items)
+print("Transactions:", register.previous_transactions)
+
+register.apply_discount()
+
+print("Total after discount:", register.total)
+print("Items after discount:", register.items)
+print("Transactions after discount:", register.previous_transactions)
   
 
      
